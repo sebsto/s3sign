@@ -47,8 +47,9 @@ if __name__ == '__main__':
         parser = argparse.ArgumentParser(description='Generate Signed S3 URL', version='%(prog)s v' +
                                                                                             str(__version__))
     parser.add_argument('-b', '--bucket', type=str, help='Bucket name', required=True)
-    parser.add_argument('-k', '--key', type=str, help='Key Name")', required=True)
+    parser.add_argument('-k', '--key', type=str, help='Key Name', required=True)
 
-    parser.add_argument('-e', '--expire', type=str, default='60*60*24', help='Seconds before expiration')
+    parser.add_argument('-e', '--expire', type=str, default='60*60*24', help='Seconds before expiration (default one '
+                                                                             'day)')
     args = parser.parse_args()
     main(**vars(args))

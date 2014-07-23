@@ -15,8 +15,8 @@ optional arguments:
   -v, --version         show program's version number and exit
   -b BUCKET, --bucket BUCKET
                         Bucket name
-  -k KEY, --key KEY     Key Name")
+  -k KEY, --key KEY     Key Name
   -e EXPIRE, --expire EXPIRE
-                        Seconds before expiration
+                        Seconds before expiration (default one day)
 ```
 
