@@ -37,10 +37,10 @@ def main(parser, **kwargs):
 
     if url is not None:
         logger.debug('Going to parse URL')
-        p = re.compile('^(http[s]?:\/\/)(.*?)\..*?\/(.*)$')
+        p = re.compile('^http[s]?:\/\/(.*?)\..*?\/(.*)$')
         m = p.match(urllib.unquote(url))
-        bucket = m.group(2)
-        key    = m.group(3)
+        bucket = m.group(1)
+        key    = m.group(2)
 
     logger.debug('bucket = %s' % bucket)
     logger.debug('key    = %s' % key)
