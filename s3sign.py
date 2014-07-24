@@ -4,7 +4,7 @@ import sys,argparse,logging,re, urllib
 import boto
 
 __author__ = 'stormacq'
-__version__ = 1.0
+__version__ = 1.1
 
 '''
 Usage : s3sign  --bucket <bucket_name>
