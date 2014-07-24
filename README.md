@@ -6,7 +6,7 @@ Learn more about [boto](http://aws.amazon.com/sdkforpython/) and [how to configu
 #Usage
 
 ```
-usage: s3sign.py [-h] [-v] -b BUCKET -k KEY [-e EXPIRE]
+usage: s3sign [-h] [-v] [-b BUCKET] [-k KEY] [-u URL] [-e EXPIRE] [-d]
 
 Generate Signed S3 URL
 
@@ -16,7 +16,10 @@ optional arguments:
   -b BUCKET, --bucket BUCKET
                         Bucket name
   -k KEY, --key KEY     Key Name
+  -u URL, --url URL     S3 URL to sign. When this parameter is given, 'bucket'
+                        and 'key' parameters are ignored
   -e EXPIRE, --expire EXPIRE
                         Seconds before expiration (default one day)
+  -d, --debug           Print debugging information
 ```
 
