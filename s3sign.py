@@ -2,6 +2,7 @@
 
 import sys,argparse,logging,re, urllib
 import boto
+from boto.exception import S3ResponseError
 
 __author__ = 'stormacq'
 __version__ = 1.1
@@ -18,6 +19,13 @@ Example : s3sign --bucket my_bucket --key test.txt --expire 60*60*24
 '''
 
 logger = None
+
+def extractBucketAndKeyNameFromURL(url, format) :
+        p = re.compile(format)
+        m = p.match(urllib.unquote(url))
+        bucket = m.group(1)
+        key    = urllib.unquote_plus(m.group(2))
+        return bucket, key
 
 def main(parser, **kwargs):
 
@@ -37,19 +45,38 @@ def main(parser, **kwargs):
 
     if url is not None:
         logger.debug('Going to parse URL')
-        p = re.compile('^http[s]?:\/\/(.*?)\..*?\/(.*)$')
-        m = p.match(urllib.unquote(url))
-        bucket = m.group(1)
-        key    = m.group(2)
+
+        # URL format https://bucket_name.s3.amazonaws.com/key_name
+        bucket, key = extractBucketAndKeyNameFromURL(url, '^http[s]?:\/\/(.*?)\..*?\/(.*)$')
+
 
     logger.debug('bucket = %s' % bucket)
     logger.debug('key    = %s' % key)
 
     s3conn = boto.connect_s3()
-    s3bucket = s3conn.get_bucket(bucket)
+
+    try:
+        s3bucket = s3conn.get_bucket(bucket)
+    except S3ResponseError as e:
+
+        if url is not None:
+            # maybe user passed a different URL format, let's try
+            # https://region_name.s3.amazonaws/bucket_name/key_name
+            bucket, key = extractBucketAndKeyNameFromURL(url, '^http[s]?:\/\/.*?\/(.*?)/(.*)$')
+            logger.debug('bucket = %s' % bucket)
+            logger.debug('key    = %s' % key)
+            try:
+                s3bucket = s3conn.get_bucket(bucket)
+            except S3ResponseError as e:
+                print 'Error : invalid bucket name : %s' % bucket
+                exit(-1)
+        else:
+            print 'Error : invalid bucket name : %s' % bucket
+            exit(-1)
+
     s3key = s3bucket.get_key(key)
     if s3key is None:
-        print 'Error : invalid bucket / key name : %s/%s' % (bucket, key)
+        print 'Error : key name : %s' % key
         exit(-1)
 
     seconds=60*60*24 if kwargs['expire'] is None else eval(kwargs['expire']) #default to one day
